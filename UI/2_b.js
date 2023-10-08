@@ -1,8 +1,34 @@
-import { StyleSheet, Text, View, Pressable, TextInput, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
 import USB from '../assets/usb.jpg';
 import Star from '../assets/star.png';
 import Camera from '../assets/camera.png';
+import { Button } from 'react-native-web';
+import { useState } from 'react';
 function Ui2b() {
+    const [imageSource, setImageSource] = useState(null);
+    const handleChooseImage = () => {
+        const options = {
+            title: 'Chọn hình ảnh',
+            cancelButtonTitle: 'Hủy',
+            takePhotoButtonTitle: 'Chụp ảnh',
+            chooseFromLibraryButtonTitle: 'Chọn từ thư viện',
+        };
+
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('Hủy tải lên');
+            } else if (response.error) {
+                console.log('Lỗi: ', response.error);
+            } else {
+                // Hình ảnh đã được chọn hoặc chụp từ máy ảnh
+                const source = { uri: response.uri };
+
+                setImageSource(source);
+            }
+        });
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -21,21 +47,22 @@ function Ui2b() {
                     <Image style={styles.iconVote} source={Star} />
                 </View>
             </View>
+            {/* {imageSource && ( */}
             <View style={styles.addImage}>
                 <Image style={styles.iconCamera} source={Camera} />
                 <Text style={styles.titleCamera}>Thêm hình ảnh</Text>
             </View>
+            {/* )} */}
             <View style={styles.describe}>
-                <TextInput placeholder="Hãy chia sẽ những điều mà bạn thích về sản phẩm" />
+                <TextInput style={styles.txtInpDes} placeholder="Hãy chia sẽ những điều mà bạn thích về sản phẩm" />
             </View>
             <View style={styles.btnSubmit}>
-                <Text style={styles.titleBtn}>Gửi</Text>
+                <Button title="Gửi" style={styles.titleBtn} onPress={handleChooseImage} />
             </View>
         </View>
     );
 }
 export default Ui2b;
-
 const styles = StyleSheet.create({
     container: {
         width: '100%',
@@ -108,12 +135,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'black',
         borderRadius: 5,
-        color: 'rgba(242, 242, 242, 1)',
+    },
+    txtInpDes: {
+        fontSize: 20,
+        paddingTop: 5,
+        paddingRight: 10,
+        paddingLeft: 10,
+        paddingBottom: 130,
     },
     btnSubmit: {
         width: 290,
         height: 45,
-        backgroundColor: 'blue',
         borderRadius: 5,
         marginTop: 20,
     },
